@@ -47,6 +47,24 @@ Add `--json` to any subcommand when structured JSON output is needed instead of 
 
 ---
 
+## Cloud / No-Shell Fallback (Web Fetch Mode)
+
+If you are running in a cloud chat environment where `scripts/sbb.py` is not present or Python code execution has no outbound internet access (such as the **Gemini macOS / web app** or an air-gapped container), fetch these public zero-auth JSON `GET` endpoints directly using your **Web Fetch / Browse** tool (URL-encoding station names):
+
+1. **Connections & live delays (`transport.opendata.ch`):**
+   - URL: `https://transport.opendata.ch/v1/connections?from=Z%C3%BCrich%20HB&to=Lausanne&limit=4`
+   - Optional params: `&date=YYYY-MM-DD&time=HH:MM&isArrivalTime=1&via[]=Luzern`
+   - Real-time check: Compare `sections[].departure.departure` vs. `sections[].departure.prognosis.departure` (and `arrival` vs. `prognosis.arrival`) to compute live delays, check `prognosis.platform` (or `!` suffix) for platform changes, and scan `sections[].journey.passList[].station.name` to see every intermediate stop on the corridor.
+2. **Ongoing SBB service disruptions (`data.sbb.ch`):**
+   - URL: `https://data.sbb.ch/api/explore/v2.1/catalog/datasets/rail-traffic-information/records?order_by=published%20desc&limit=30`
+   - Filtering: Keep records whose `enddatetime` is in the future (relative to current `Europe/Zurich` time) and whose `title` or `description_html` mentions any origin, transfer, intermediate, or destination station on the route (including bilingual names like `Fribourg/Freiburg` or `Biel/Bienne`).
+3. **Live station board (`transport.opendata.ch`):**
+   - URL: `https://transport.opendata.ch/v1/stationboard?station=Bern&limit=10&type=departure` (or `type=arrival`)
+4. **Station search (`transport.opendata.ch`):**
+   - URL: `https://transport.opendata.ch/v1/locations?query=Biel&type=station`
+
+---
+
 ## Trip-Planning Workflow
 
 1. **Resolve ambiguous stops if needed:**

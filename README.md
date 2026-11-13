@@ -33,6 +33,18 @@ Requires **only Python 3.9+ standard library** (no `pip install` or virtual envi
 ./install.sh --all-agents
 ```
 
+### Uploading to Gemini macOS App & Claude.ai (Cloud Skills)
+Build clean uploadable `.zip` bundles (free of `.DS_Store` / `__MACOSX` metadata):
+```bash
+./package_zip.sh
+```
+This produces two archives in `dist/`:
+1. **`dist/sbb-trip-planner-gemini.zip`** *(for **Gemini macOS app** & **gemini.google.com**)*:
+   - Open **Customize → Skills → Create → Upload** and select `dist/sbb-trip-planner-gemini.zip` (Markdown-only bundle tailored for Gemini's upload validator; uses Gemini's Web Fetch fallback against the zero-auth `GET` APIs).
+2. **`dist/sbb-trip-planner.zip`** *(for **Claude.ai** & **Claude Desktop** Cloud Skills)*:
+   - Upload under **Settings → Capabilities → Skills**.
+   - Under **Settings → Capabilities → Code execution and file creation**, enable **Allow network access** and allowlist `transport.opendata.ch`, `data.sbb.ch`, and `api.opentransportdata.swiss` (or set egress to *All domains*).
+
 ---
 
 ## CLI Usage

@@ -10,6 +10,9 @@ venv/
 .DS_Store
 *.swp
 
+# Build artifacts
+dist/
+
 # Local secrets / env files
 .env
 .env.*

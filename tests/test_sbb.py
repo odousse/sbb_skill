@@ -339,6 +339,31 @@ class SbbSkillTests(unittest.TestCase):
         self.assertEqual(leg["dep_platform"], "4")
         self.assertIn("Fribourg/Freiburg", conn["corridor_stations"])
 
+    def test_package_zip_bundles(self) -> None:
+        import subprocess
+        import zipfile
+
+        pkg_script = REPO_ROOT / "package_zip.sh"
+        subprocess.run(["bash", str(pkg_script)], check=True, cwd=str(REPO_ROOT))
+
+        full_zip = REPO_ROOT / "dist" / "sbb-trip-planner.zip"
+        gemini_zip = REPO_ROOT / "dist" / "sbb-trip-planner-gemini.zip"
+        self.assertTrue(full_zip.is_file())
+        self.assertTrue(gemini_zip.is_file())
+
+        with zipfile.ZipFile(full_zip) as zf:
+            names = set(zf.namelist())
+            self.assertIn("sbb-trip-planner/SKILL.md", names)
+            self.assertIn("sbb-trip-planner/scripts/sbb.py", names)
+            self.assertIn("sbb-trip-planner/references/api-details.md", names)
+            self.assertTrue(all(not p.endswith(".DS_Store") for p in names))
+
+        with zipfile.ZipFile(gemini_zip) as zf:
+            names = set(zf.namelist())
+            self.assertIn("sbb-trip-planner/SKILL.md", names)
+            self.assertIn("sbb-trip-planner/references/api-details.md", names)
+            self.assertNotIn("sbb-trip-planner/scripts/sbb.py", names)
+
 
 if __name__ == "__main__":
     unittest.main()
